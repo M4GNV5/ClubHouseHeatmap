@@ -1,0 +1,9 @@
+{
+	"username": "<fritz box username here or empty and the webpanel password>",
+	"password": "<username's password or the webpanel password>",
+	"logfile": "/dev/stdout",
+	"privacy": "full",
+	"timeFormat": "%Y-%m-%dT%H:%M",
+	"serviceCount": 2,
+	"refreshTime": 60
+}
