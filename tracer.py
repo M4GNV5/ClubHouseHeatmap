@@ -16,7 +16,7 @@ def anonymizeMac(mac):
 		return mac
 	elif config["privacy"] == "anon":
 		digest = md5.new()
-		digest.update(host["mac"])
+		digest.update(mac)
 		return digest.hexdigest()
 	else: #full
 		return ""
@@ -41,7 +41,6 @@ while True:
 		log.write("%s + %s\n" % (now, anonymizeMac(host["mac"])))
 
 	for mac in activeDevices:
-		print mac
 		log.write("%s - %s\n" % (now, anonymizeMac(mac)))
 
 	activeDevices = _activeDevices
