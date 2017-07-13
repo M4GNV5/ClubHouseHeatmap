@@ -9,35 +9,40 @@ conn = FritzWLAN(user=config["username"], password=config["password"])
 log = open(config["logfile"], "a")
 activeDevices = []
 
-log.write("RESET\n")
+log.write("%s RESET\n" % (datetime.datetime.now().strftime(config["timeFormat"])))
+
+def anonymizeMac(mac):
+	if config["privacy"] == "none":
+		return mac
+	elif config["privacy"] == "anon":
+		digest = md5.new()
+		digest.update(host["mac"])
+		return digest.hexdigest()
+	else: #full
+		return ""
 
 while True:
+	now = datetime.datetime.now().strftime(config["timeFormat"])
 
 	hosts = []
-
 	for i in range(1, config["serviceCount"] + 1):
 		conn.service = str(i)
-		hosts.append(conn.get_hosts_info())
+		hosts.extend(conn.get_hosts_info())
 
-	for index, host in enumerate(hosts):
-		host = host[0]
+	_activeDevices = []
+	for host in hosts:
+		_activeDevices.append(host["mac"])
 
 		if host["mac"] in activeDevices:
+			index = activeDevices.index(host["mac"])
+			del activeDevices[index]
 			continue
 
-		activeDevices.append(host["mac"])
+		log.write("%s + %s\n" % (now, anonymizeMac(host["mac"])))
 
-		text = ""
-		if config["privacy"] == "none":
-			text = host["mac"]
-		elif config["privacy"] == "anon":
-		 	digest = md5.new()
-			digest.update(host["mac"])
-			text = digest.hexdigest()
-		else: #full
-			text = ""
+	for mac in activeDevices:
+		print mac
+		log.write("%s - %s\n" % (now, anonymizeMac(mac)))
 
-		log.write("%s + %s\n" % (datetime.datetime.now().strftime(config["timeFormat"]), text))
-
-
+	activeDevices = _activeDevices
 	time.sleep(config["refreshTime"])
