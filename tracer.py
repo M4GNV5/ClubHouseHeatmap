@@ -1,7 +1,6 @@
 import time, md5, datetime, json
 from fritzconnection.fritzwlan import FritzWLAN
 
-config = False
 with open("./config.json", "r") as fd:
 	config = json.load(fd)
 
@@ -22,14 +21,15 @@ def anonymizeMac(mac):
 		return ""
 
 while True:
-	now = datetime.datetime.now().strftime(config["timeFormat"])
 
 	hosts = []
 	for i in range(1, config["serviceCount"] + 1):
 		conn.service = str(i)
 		hosts.extend(conn.get_hosts_info())
 
+	now = datetime.datetime.now().strftime(config["timeFormat"])
 	_activeDevices = []
+
 	for host in hosts:
 		_activeDevices.append(host["mac"])
 
