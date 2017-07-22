@@ -9,6 +9,7 @@ log = open(config["logfile"], "a")
 activeDevices = []
 
 log.write("%s RESET\n" % (datetime.datetime.now().strftime(config["timeFormat"])))
+log.flush()
 
 def anonymizeMac(mac):
 	if config["privacy"] == "none":
@@ -39,9 +40,13 @@ while True:
 			continue
 
 		log.write("%s + %s\n" % (now, anonymizeMac(host["mac"])))
+		log.flush()
 
 	for mac in activeDevices:
 		log.write("%s - %s\n" % (now, anonymizeMac(mac)))
+
+	if len(activeDevices) > 0:
+		log.flush()
 
 	activeDevices = _activeDevices
 	time.sleep(config["refreshTime"])
