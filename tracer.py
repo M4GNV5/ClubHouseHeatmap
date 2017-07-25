@@ -23,6 +23,8 @@ def anonymizeMac(mac):
 
 while True:
 
+	start = datetime.datetime.now()
+
 	hosts = []
 	for i in range(1, config["serviceCount"] + 1):
 		conn.service = str(i)
@@ -49,4 +51,7 @@ while True:
 		log.flush()
 
 	activeDevices = _activeDevices
-	time.sleep(config["refreshTime"])
+
+	waitTime = config["refreshTime"] - (datetime.datetime.now() - start).total_seconds()
+	if waitTime > 0:
+		time.sleep(waitTime)
