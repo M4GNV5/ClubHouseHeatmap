@@ -4,6 +4,5 @@
 	"logfile": "/dev/stdout",
 	"privacy": "full",
 	"timeFormat": "%Y-%m-%dT%H:%M",
-	"serviceCount": 2,
 	"refreshTime": 60
 }

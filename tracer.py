@@ -1,10 +1,10 @@
 import time, md5, datetime, json
-from fritzconnection.fritzwlan import FritzWLAN
+from fritzconnection.fritzhosts import FritzHosts
 
 with open("./config.json", "r") as fd:
 	config = json.load(fd)
 
-conn = FritzWLAN(user=config["username"], password=config["password"])
+conn = FritzHosts(user=config["username"], password=config["password"])
 log = open(config["logfile"], "a")
 activeDevices = []
 
@@ -25,20 +25,18 @@ while True:
 
 	start = datetime.datetime.now()
 
-	hosts = []
-	for i in range(1, config["serviceCount"] + 1):
-		conn.service = str(i)
-		hosts.extend(conn.get_hosts_info())
-
-	now = datetime.datetime.now().strftime(config["timeFormat"])
 	_activeDevices = []
+	hosts = conn.get_hosts_info()
+	now = datetime.datetime.now().strftime(config["timeFormat"])
 
 	for host in hosts:
+		if host["status"] == "0":
+			continue
+
 		_activeDevices.append(host["mac"])
 
 		if host["mac"] in activeDevices:
-			index = activeDevices.index(host["mac"])
-			del activeDevices[index]
+			activeDevices.remove(host["mac"])
 			continue
 
 		log.write("%s + %s\n" % (now, anonymizeMac(host["mac"])))
