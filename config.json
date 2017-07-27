@@ -4,5 +4,7 @@
 	"logfile": "/dev/stdout",
 	"privacy": "full",
 	"timeFormat": "%Y-%m-%dT%H:%M",
-	"refreshTime": 60
+	"refreshTime": 60,
+	"blacklist": [
+	]
 }

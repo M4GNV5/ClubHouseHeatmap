@@ -30,7 +30,7 @@ while True:
 	now = datetime.datetime.now().strftime(config["timeFormat"])
 
 	for host in hosts:
-		if host["status"] == "0":
+		if host["status"] == "0" or host["mac"] in config["blacklist"]:
 			continue
 
 		_activeDevices.append(host["mac"])
