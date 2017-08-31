@@ -12,6 +12,7 @@ averageCount = []
 averageIndex = 0
 online = 0
 maxOnline = 0
+lastTimestamp = None
 
 for i in range(0, 7 * 24):
 	average.append(None)
@@ -29,10 +30,13 @@ def roundTime(dt, roundUp, amount = 60 * 60):
 	return dt + datetime.timedelta(0, rounding - seconds, -dt.microsecond)
 
 def fillData():
-	global averageIndex, maxOnline
+	global averageIndex, maxOnline, timestamp, lastTimestamp
 	_averageIndex = timestamp.weekday() * 24 + timestamp.hour
+	
+	times = 1 + timestamp.isocalendar()[1] - lastTimestamp.isocalendar()[1]
+	lastTimestamp = timestamp
 
-	while averageIndex != _averageIndex:
+	while times > 0 or averageIndex != _averageIndex:
 		if average[averageIndex] == None:
 			average[averageIndex] = maxOnline
 		else:
@@ -43,12 +47,16 @@ def fillData():
 		averageIndex += 1
 		if averageIndex == 7 * 24:
 			averageIndex = 0
+			
+		if averageIndex == _averageIndex:
+			times = times - 1
 
 
 
 with open(sys.argv[1], "r") as log:
 	line = log.readline()[:-1].split(" ")
 	timestamp = parseDate(line[0])
+	lastTimestamp = timestamp
 	timeBorder = roundTime(timestamp, True)
 	averageIndex = timestamp.weekday() * 24 + timestamp.hour
 
