@@ -82,6 +82,6 @@ fillData()
 
 for i in range(0, 7 * 24):
 	if averageCount[i] != 0:
-		average[i] /= averageCount[i]
+		average[i] /= float(averageCount[i])
 
 print json.dumps(average)
