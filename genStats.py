@@ -1,21 +1,23 @@
 import sys, datetime, json
 from dateutil.parser import parse as parseDate
 
-if len(sys.argv) != 2:
-	print "Usage: python %s <logfile>" % sys.argv[0]
+if len(sys.argv) != 3:
+	print "Usage: python %s <logfile> <datafile>" % sys.argv[0]
 	exit()
 
-
-
+minima = []
+maxima = []
 average = []
 averageCount = []
-averageIndex = 0
+dataIndex = 0
 online = 0
 maxOnline = 0
 lastTimestamp = None
 
 for i in range(0, 7 * 24):
-	average.append(None)
+	minima.append(9000)
+	maxima.append(0)
+	average.append(0)
 	averageCount.append(0)
 
 
@@ -30,25 +32,23 @@ def roundTime(dt, roundUp, amount = 60 * 60):
 	return dt + datetime.timedelta(0, rounding - seconds, -dt.microsecond)
 
 def fillData():
-	global averageIndex, maxOnline, timestamp, lastTimestamp
-	_averageIndex = timestamp.weekday() * 24 + timestamp.hour
-	
+	global dataIndex, maxOnline, timestamp, lastTimestamp
+	_dataIndex = timestamp.weekday() * 24 + timestamp.hour
+
 	times = 1 + timestamp.isocalendar()[1] - lastTimestamp.isocalendar()[1]
 	lastTimestamp = timestamp
 
-	while times > 0 or averageIndex != _averageIndex:
-		if average[averageIndex] == None:
-			average[averageIndex] = maxOnline
-		else:
-			average[averageIndex] += maxOnline
+	while times > 0 or dataIndex != _dataIndex:
+		minima[dataIndex] = min(minima[dataIndex], maxOnline)
+		maxima[dataIndex] = max(maxima[dataIndex], maxOnline)
+		average[dataIndex] += maxOnline
+		averageCount[dataIndex] += 1
 
-		averageCount[averageIndex] += 1
+		dataIndex += 1
+		if dataIndex == 7 * 24:
+			dataIndex = 0
 
-		averageIndex += 1
-		if averageIndex == 7 * 24:
-			averageIndex = 0
-			
-		if averageIndex == _averageIndex:
+		if dataIndex == _dataIndex:
 			times = times - 1
 
 
@@ -58,7 +58,7 @@ with open(sys.argv[1], "r") as log:
 	timestamp = parseDate(line[0])
 	lastTimestamp = timestamp
 	timeBorder = roundTime(timestamp, True)
-	averageIndex = timestamp.weekday() * 24 + timestamp.hour
+	dataIndex = timestamp.weekday() * 24 + timestamp.hour
 
 	if line[1] != "RESET":
 		print "WARN: First line is not a RESET line"
@@ -88,8 +88,10 @@ with open(sys.argv[1], "r") as log:
 
 fillData()
 
-for i in range(0, 7 * 24):
-	if averageCount[i] != 0:
-		average[i] /= float(averageCount[i])
+with open(sys.argv[2], "w") as output:
+	output.write("Minimum Maximum Durchschnitt\n")
 
-print json.dumps(average)
+	for i in range(0, 7 * 24):
+		if averageCount[i] != 0:
+			average[i] /= float(averageCount[i])
+		output.write("%d %d %g\n" % (minima[i], maxima[i], average[i]))
