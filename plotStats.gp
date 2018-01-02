@@ -18,8 +18,12 @@ set xlabel font ", 18"
 set ylabel font ", 18"
 
 #axis descriptions
+stats [0:] "stats.dat" using 3:4
+minY=STATS_min_x < STATS_min_y ? STATS_min_x : STATS_min_y
+maxY=STATS_max_x > STATS_max_y ? STATS_max_x : STATS_max_y
+
 set xrange [0:23]
-set yrange [0:]
+set yrange [minY - 0.3:maxY + 0.3]
 set xtics 0, 1, 24 font ", 18"
 set ytics font ", 18"
 
