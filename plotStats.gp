@@ -7,7 +7,7 @@ set grid back ls 102
 
 #title and legend
 set title font ", 38"
-set title "negative offset" offset 0,-6
+set title "" offset 0,-6
 set key font ", 18"
 set key left top
 
@@ -31,7 +31,6 @@ do for [day=1:7] {
 	set title word(dayNames, day)
 	start=(day - 1) * 24
 	end=day * 24 + 1
-	plot "stats.dat" every ::start::end using 0:1 smooth csplines lc rgb "green" title columnheader, \
-		"stats.dat" every ::start::end using 0:2 smooth csplines lc rgb "red" title columnheader, \
-		"stats.dat" every ::start::end using 0:3 smooth csplines lc rgb "blue" title columnheader
+	plot "stats.dat" every ::start::end using 0:3 smooth csplines title "Durchschnitt", \
+		"stats.dat" every ::start::end using 0:4 with lines title "Aktivität"
 }

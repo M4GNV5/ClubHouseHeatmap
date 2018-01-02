@@ -9,9 +9,12 @@ minima = []
 maxima = []
 average = []
 averageCount = []
+activity = []
+activityCount = []
 dataIndex = 0
 online = 0
 maxOnline = 0
+onlineChange = 0
 lastTimestamp = None
 
 for i in range(0, 7 * 24):
@@ -19,6 +22,8 @@ for i in range(0, 7 * 24):
 	maxima.append(0)
 	average.append(0)
 	averageCount.append(0)
+	activity.append(0)
+	activityCount.append(0)
 
 
 
@@ -37,6 +42,9 @@ def fillData():
 
 	times = 1 + timestamp.isocalendar()[1] - lastTimestamp.isocalendar()[1]
 	lastTimestamp = timestamp
+
+	activity[dataIndex] += onlineChange
+	activityCount[dataIndex] += 1
 
 	while times > 0 or dataIndex != _dataIndex:
 		minima[dataIndex] = min(minima[dataIndex], maxOnline)
@@ -71,8 +79,10 @@ with open(sys.argv[1], "r") as log:
 			online = 0
 		elif line[1] == "+":
 			online += 1
+			onlineChange += 1
 		elif line[1] == "-":
 			online -= 1
+			onlineChange -= 1
 		else:
 			print "Invalid line %s" % " ".join(line)
 
@@ -80,6 +90,7 @@ with open(sys.argv[1], "r") as log:
 			fillData()
 			timeBorder = roundTime(timestamp, True)
 			maxOnline = online
+			onlineChange = 0
 
 		if online > maxOnline:
 			maxOnline = online
@@ -89,9 +100,9 @@ with open(sys.argv[1], "r") as log:
 fillData()
 
 with open(sys.argv[2], "w") as output:
-	output.write("Minimum Maximum Durchschnitt\n")
-
 	for i in range(0, 7 * 24):
 		if averageCount[i] != 0:
 			average[i] /= float(averageCount[i])
-		output.write("%d %d %g\n" % (minima[i], maxima[i], average[i]))
+		if activityCount[i] != 0:
+			activity[i] /= float(activityCount[i])
+		output.write("%d %d %g %g\n" % (minima[i], maxima[i], average[i], activity[i]))
