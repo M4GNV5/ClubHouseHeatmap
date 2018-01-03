@@ -43,7 +43,8 @@ def fillData():
 	times = 1 + timestamp.isocalendar()[1] - lastTimestamp.isocalendar()[1]
 	lastTimestamp = timestamp
 
-	activity[dataIndex] += onlineChange
+	if onlineChange > 2 or onlineChange < -2:
+		activity[dataIndex] += onlineChange
 	activityCount[dataIndex] += 1
 
 	while times > 0 or dataIndex != _dataIndex:
