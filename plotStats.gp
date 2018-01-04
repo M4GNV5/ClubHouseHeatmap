@@ -31,10 +31,10 @@ dayNames="Montag Dienstag Mittwoch Donnerstag Freitag Samstag Sonntag"
 
 #plotting
 do for [day=1:7] {
-	set output sprintf("day%d.svg", day)
+	set output sprintf("plots/day%d.svg", day)
 	set title word(dayNames, day)
 	start=(day - 1) * 24
 	end=day * 24 + 1
 	plot "stats.dat" every ::start::end using 0:3 smooth csplines title "Durchschnitt", \
-		"stats.dat" every ::start::end using 0:4 with lines title "Aktivität"
+		"stats.dat" every ::start::end using 0:4 with lines title "Logins"
 }
