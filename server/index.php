@@ -37,6 +37,10 @@
 				}
 				else
 				{
+					$day = (int)$day;
+					if($day < 1 || $day > 7)
+						$day = 1;
+
 					echo("<img src=\"day$day.svg\" />");
 				}
 			?>
