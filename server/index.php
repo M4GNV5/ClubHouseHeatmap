@@ -1,21 +1,7 @@
 <html>
-	<head>
-		<style>
-			#main
-			{
-				position: absolute;
-				left: 50%;
-				transform: translate(-50%, 0);
-			}
-			.text
-			{
-				text-align: center;
-			}
-		</style>
-	</head>
 	<body>
-		<div id="main">
-			<p class="text">
+		<div style="text-align: center;">
+			<p>
 				Der Graph zeigt die Durschnittliche Anzahl an Geräten die mit dem
 				Router im Vereinsheim des Bürgernetz Landkreis Pfaffenhofen
 				verbunden sind, sowie für jede Stunde wie viele Geräte sich im
